@@ -1,0 +1,21 @@
+ssh -l trng110 taito-gpu.csc.fi
+
+module purge
+module load python-env/3.4.5 cuda/8.0
+export THEANO_FLAGS='device=gpu,floatX=float32'
+
+
+
+pip3 install --user /appl/opt/tensorflow/0.11.0/tensorflow-0.11.0-py3-none-any.whl
+pip3 install --user --upgrade https://github.com/Theano/Theano/archive/master.zip
+pip3 install --user --upgrade https://github.com/Lasagne/Lasagne/archive/master.zip 
+pip3 install --user notebook
+
+
+srun -n 1 -p gpu --gres=gpu:1 -t 06:30:00 --reservation=dnn_wed --pty $SHELL
+hostname  # you need this information later
+.local/bin/jupyter-notebook --no-browser --port=8691
+
+
+ssh -l trng110 -L 8691:localhost:8691 taito-gpu.csc.fi
+ssh -L 8691:localhost:8691 g88  # use output of “hostname” command above
